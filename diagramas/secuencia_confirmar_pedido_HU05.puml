@@ -1,0 +1,23 @@
+@startuml secuencia_confirmar_pedido
+title HU-05 Confirmar pedido – secuencia (RF05, RF08, RNF01)
+actor Cliente
+participant "Web (frontend)" as UI
+participant "API Pedidos" as API
+database "BD" as BD
+actor Cajero
+Cliente -> UI : Confirmar pedido (método de pago)
+UI -> UI : Deshabilitar botón (evita doble envío)
+UI -> API : POST /pedidos {idempotency-key}
+API -> BD : BEGIN; verificar stock de productos
+alt stock suficiente
+  API -> BD : INSERT pedido (estado = Recibido)
+  API -> BD : COMMIT
+  API --> UI : 201 {numero: PC-20270213-015} (< 3 s)
+  UI --> Cliente : Confirmación con número único
+  API -> Cajero : Nuevo pedido en el panel (HU-07)
+else stock agotado
+  API -> BD : ROLLBACK
+  API --> UI : 409 Conflict
+  UI --> Cliente : "Algunos productos se agotaron"
+end
+@enduml

@@ -1,0 +1,21 @@
+@startuml actividad_pedido
+title Pedido en línea – HU-02, HU-03, HU-04, HU-05 y HU-07 (RF02–RF05, RF07)
+start
+:Cliente revisa el catálogo (HU-02);
+repeat
+  :Agrega productos y cantidades (HU-03);
+repeat while (¿Carrito vacío?) is (sí) not (no)
+:Elige recojo o delivery;
+if (¿Delivery?) then (sí)
+  :Ingresa dirección;
+  :Calcular envío por zona (HU-04);
+endif
+:Mostrar total a pagar;
+:Elegir efectivo, Yape o Plin (HU-05);
+if (¿Yape o Plin?) then (sí)
+  :Ingresar código de operación;
+endif
+:Registrar pedido y generar número PC-AAAAMMDD-NNN;
+:Pedido aparece en el panel del cajero (HU-07);
+stop
+@enduml
